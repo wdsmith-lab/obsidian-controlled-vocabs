@@ -1,134 +1,311 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
-
-// Remember to rename these classes and interfaces!
+// filepath: main.ts
+import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
 
 interface MyPluginSettings {
-	mySetting: string;
+    mySetting: string;
+    vocabularyFilePath: string;
+    outputDelimiter: string;
+    termsPerLine: number;  // Optional: Number of terms to display per line in the modal
+}
+
+interface Vocabulary {
+    [key: string]: string[];
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
+    mySetting: 'default',
+    vocabularyFilePath: 'vocabulary.md',
+    outputDelimiter: ',',
+    termsPerLine: 5  // Default to 5 terms per line
 }
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+async function loadVocabularies(filePath: string): Promise<Vocabulary> {
+    try {
+        const file = this.app.vault.getAbstractFileByPath(filePath);
+        if (!file || !(file instanceof TFile)) {
+            new Notice(`Vocabulary file "${filePath}" not found.`);
+            return {};
+        }
+        const content = await this.app.vault.read(file);
+        const vocabularies: Vocabulary = {};
+        //console.log(`Controlled Vocabs (content):`, content); // Log the content of the vocabulary file for debugging
 
-	async onload() {
-		await this.loadSettings();
-
-		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
-			// Called when the user clicks the icon.
-			new Notice('This is a notice!');
-		});
-		// Perform additional things with the ribbon
-		ribbonIconEl.addClass('my-plugin-ribbon-class');
-
-		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-		const statusBarItemEl = this.addStatusBarItem();
-		statusBarItemEl.setText('Status Bar Text');
-
-		// This adds a simple command that can be triggered anywhere
-		this.addCommand({
-			id: 'open-sample-modal-simple',
-			name: 'Open sample modal (simple)',
-			callback: () => {
-				new SampleModal(this.app).open();
-			}
-		});
-		// This adds an editor command that can perform some operation on the current editor instance
-		this.addCommand({
-			id: 'sample-editor-command',
-			name: 'Sample editor command',
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				console.log(editor.getSelection());
-				editor.replaceSelection('Sample Editor Command');
-			}
-		});
-		// This adds a complex command that can check whether the current state of the app allows execution of the command
-		this.addCommand({
-			id: 'open-sample-modal-complex',
-			name: 'Open sample modal (complex)',
-			checkCallback: (checking: boolean) => {
-				// Conditions to check
-				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
-				if (markdownView) {
-					// If checking is true, we're simply "checking" if the command can be run.
-					// If checking is false, then we want to actually perform the operation.
-					if (!checking) {
-						new SampleModal(this.app).open();
-					}
-
-					// This command will only show up in Command Palette when the check function returns true
-					return true;
-				}
-			}
-		});
-
-		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
-
-		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
-		// Using this function will automatically remove the event listener when this plugin is disabled.
-		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-			console.log('click', evt);
-		});
-
-		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
-	}
-
-	onunload() {
-
-	}
-
-	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-	}
-
-	async saveSettings() {
-		await this.saveData(this.settings);
-	}
+        content.split('\n').forEach(line => {
+            if (line.trim() === '') return; // Skip empty lines
+            const [key, value] = line.split(':');
+            if (key && value) {
+                vocabularies[key.trim()] = value.split(',').map(term => term.trim());
+            }
+        });
+        return vocabularies;
+    } catch (e) {
+        new Notice(`Controlled Vocabs: Error loading vocabulary file "${filePath}": ${e}`);
+        console.log(`Controlled Vocabs: Error loading vocabulary file ` + filePath);
+        return {};
+    }
 }
 
-class SampleModal extends Modal {
-	constructor(app: App) {
-		super(app);
-	}
+export default class ControlledVocabsPlugin extends Plugin {
+    settings: MyPluginSettings;
+    vocabularies: Vocabulary = {};
 
-	onOpen() {
-		const {contentEl} = this;
-		contentEl.setText('Woah!');
-	}
+    async onload() {
+        console.log(`Controlled Vocabs: Loading Controlled Vocabs Plugin`);
+        await this.loadSettings();
 
-	onClose() {
-		const {contentEl} = this;
-		contentEl.empty();
-	}
+        // Helper to register all vocab commands
+        const registerVocabCommands = () => {
+            // Remove previous commands by reloading the plugin (Obsidian doesn't provide a direct way to remove commands)
+            // So we just add new ones; duplicates are ignored by Obsidian.
+            for (const vocabName in this.vocabularies) {
+                console.log(`Controlled Vocabs: Registering command for vocabulary: ${vocabName}`);
+                this.addCommand({
+                    id: `add-from-${vocabName.toLowerCase().replace(/\s+/g, '-')}`,
+                    name: `Add from '${vocabName}'`,
+                    editorCallback: (editor: Editor, view: MarkdownView) => {
+                        new VocabModal(this.app, this, vocabName, this.vocabularies[vocabName], editor).open();
+                    }
+                });
+            }
+        };
+
+        // Wait for layout to be ready before loading vocabularies and registering commands
+        this.app.workspace.onLayoutReady(async () => {
+            this.vocabularies = await loadVocabularies.call(this, this.settings.vocabularyFilePath);
+            console.log("Controlled Vocabs: Vocabularies loaded:", this.vocabularies);
+            registerVocabCommands();
+        });
+
+        // Add command to reload vocabularies
+        console.log("Controlled Vocabs: Adding reload command");
+        this.addCommand({
+            id: 'reload-vocabularies',
+            name: 'Reload Vocabularies',
+            callback: async () => {
+                const prevVocabNames = Object.keys(this.vocabularies);
+                this.vocabularies = await loadVocabularies.call(this, this.settings.vocabularyFilePath);
+                new Notice('Controlled Vocabs: Vocabularies reloaded.');
+                console.log("Controlled Vocabs: Vocabularies reloaded:", this.vocabularies);
+                registerVocabCommands();
+                // Warn if any vocabularies were removed (potential orphaned commands)
+                const currentVocabNames = Object.keys(this.vocabularies);
+                const removed = prevVocabNames.filter(name => !currentVocabNames.includes(name));
+                if (removed.length > 0) {
+                    new Notice('Controlled Vocabs: Some commands for removed vocabularies may remain in the command palette until you disable/re-enable the plugin or reload the vault.');
+                }
+            }
+        });
+
+        // This adds a settings tab so the user can configure various aspects of the plugin
+        this.addSettingTab(new SampleSettingTab(this.app, this));
+
+        // If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
+        // Using this function will automatically remove the event listener when this plugin is disabled.
+        /*this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
+            console.log('click', evt);
+        });*/
+
+        // When registering intervals, this function will automatically clear the interval when the plugin is disabled.
+        //this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+    }
+
+    onunload() {
+
+    }
+
+    async loadSettings() {
+        this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    }
+
+    async saveSettings() {
+        await this.saveData(this.settings);
+    }
 }
 
 class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+    plugin: ControlledVocabsPlugin;
 
-	constructor(app: App, plugin: MyPlugin) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
+    constructor(app: App, plugin: ControlledVocabsPlugin) {
+        super(app, plugin);
+        this.plugin = plugin;
+    }
 
-	display(): void {
-		const {containerEl} = this;
+    display(): void {
+        const {containerEl} = this;
 
-		containerEl.empty();
+        containerEl.empty();
 
-		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
-				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
-					await this.plugin.saveSettings();
-				}));
-	}
+        new Setting(containerEl)
+            .setName('Output Delimiter')
+            .setDesc("Delimiter used to separate output values.")
+            .addText(text => text
+                .setPlaceholder(', ')
+                .setValue(this.plugin.settings.outputDelimiter)
+                .onChange(async (value) => {
+                    this.plugin.settings.mySetting = value;
+                    await this.plugin.saveSettings();
+                }));
+
+        new Setting(containerEl)
+            .setName('Vocabulary File Path')
+            .setDesc('Path to the markdown file containing your vocabularies.')
+            .addText(text => text
+                .setPlaceholder('Enter file path')
+                .setValue(this.plugin.settings.vocabularyFilePath)
+                .onChange(async (value) => {
+                    this.plugin.settings.vocabularyFilePath = value;
+                    await this.plugin.saveSettings();
+                }));
+
+        new Setting(containerEl)
+            .setName('Terms Per Line')
+            .setDesc("Terms to display per line in the modal.")
+            .addText(text => {
+                text.inputEl.type = "number";
+                text.inputEl.min = "1";
+                text.setValue(this.plugin.settings.termsPerLine.toString());
+                text.onChange(async (value) => {
+                    const intValue = parseInt(value, 10);
+                    if (!isNaN(intValue) && intValue > 0) {
+                        this.plugin.settings.termsPerLine = intValue;
+                        await this.plugin.saveSettings();
+                    }
+                });
+            });
+
+    }
+}
+
+class VocabModal extends Modal {
+    plugin: ControlledVocabsPlugin;
+    vocabName: string;
+    terms: string[];
+    editor: Editor;
+    selectedTerms: Set<string>;
+    previewEl: HTMLElement;
+
+    constructor(app: App, plugin: ControlledVocabsPlugin, vocabName: string, terms: string[], editor: Editor) {
+        super(app);
+        this.plugin = plugin;
+        this.vocabName = vocabName;
+        this.terms = terms;
+        this.editor = editor;
+        this.selectedTerms = new Set();
+    }
+
+    onOpen() {
+        let { contentEl } = this;
+
+        contentEl.createEl("h1", { text: `Add from ${this.vocabName}` });
+
+        // Preview line
+        this.previewEl = contentEl.createDiv({ cls: 'vocab-preview' });
+        this.updatePreview();
+
+        // Get termsPerLine from plugin settings (default to 5 if not found)
+        let termsPerLine = 5;
+        if (this.plugin && this.plugin.settings && typeof this.plugin.settings.termsPerLine === 'number') {
+            termsPerLine = this.plugin.settings.termsPerLine;
+        }
+
+        // Get delimiter from settings (default to ',')
+        let delimiter = ',';
+        if (this.plugin && this.plugin.settings && typeof this.plugin.settings.outputDelimiter === 'string') {
+            delimiter = this.plugin.settings.outputDelimiter;
+        }
+
+        // Store button references for toggling
+        const buttonMap: Map<string, HTMLButtonElement> = new Map();
+
+        for (let i = 0; i < this.terms.length; i += termsPerLine) {
+            const row = contentEl.createDiv({ cls: 'vocab-row' });
+            for (let j = i; j < i + termsPerLine && j < this.terms.length; j++) {
+                const term = this.terms[j];
+                let button = row.createEl("button", { text: term });
+                buttonMap.set(term, button);
+                button.addEventListener("click", () => {
+                    if (this.selectedTerms.has(term)) {
+                        this.selectedTerms.delete(term);
+                        button.removeClass('selected');
+                    } else {
+                        this.selectedTerms.add(term);
+                        button.addClass('selected');
+                    }
+                    this.updatePreview();
+                });
+            }
+        }
+
+        // Action buttons row
+        const actionsRow = contentEl.createDiv({ cls: 'vocab-actions' });
+        const applyBtn = actionsRow.createEl('button', { text: 'Apply' });
+        const cancelBtn = actionsRow.createEl('button', { text: 'Cancel' });
+
+        applyBtn.addEventListener('click', () => {
+            this.applySelection = true;
+            this.close();
+        });
+        cancelBtn.addEventListener('click', () => {
+            this.applySelection = false;
+            this.close();
+        });
+
+        // Add some basic styling for selected buttons and actions row
+        const style = document.createElement('style');
+        style.textContent = `
+            .vocab-row { margin-bottom: 0.5em; }
+            .vocab-row button {
+                margin-right: 0.5em;
+                margin-bottom: 0.3em;
+            }
+            .vocab-row button.selected {
+                background-color: var(--interactive-accent, #4a90e2);
+                color: white;
+                border: 1px solid var(--interactive-accent, #4a90e2);
+            }
+            .vocab-preview {
+                margin-bottom: 1em;
+                font-style: italic;
+            }
+            .vocab-actions {
+                margin-top: 1em;
+                display: flex;
+                gap: 1em;
+                justify-content: flex-end;
+            }
+            .vocab-actions button {
+                min-width: 80px;
+                padding: 0.4em 1.2em;
+                font-weight: bold;
+            }
+        `;
+        contentEl.appendChild(style);
+    }
+
+    updatePreview() {
+        if (!this.previewEl) return;
+        // Get delimiter from settings (default to ',')
+        let delimiter = ',';
+        if (this.plugin && this.plugin.settings && typeof this.plugin.settings.outputDelimiter === 'string') {
+            delimiter = this.plugin.settings.outputDelimiter;
+        }
+        const termsArr = Array.from(this.selectedTerms);
+        this.previewEl.setText('Preview: ' + (termsArr.length > 0 ? termsArr.join(delimiter + ' ') : ''));
+    }
+
+    applySelection: boolean = false;
+    onClose() {
+        let { contentEl } = this;
+        contentEl.empty();
+        if (this.applySelection) {
+            const termsArr = Array.from(this.selectedTerms);
+            let delimiter = ',';
+            if (this.plugin && this.plugin.settings && typeof this.plugin.settings.outputDelimiter === 'string') {
+                delimiter = this.plugin.settings.outputDelimiter;
+            }
+            if (termsArr.length > 0) {
+                this.editor.replaceSelection(termsArr.join(delimiter + ' '));
+            }
+        }
+    }
 }
