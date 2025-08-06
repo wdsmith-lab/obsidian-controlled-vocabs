@@ -146,16 +146,29 @@ class SampleSettingTab extends PluginSettingTab {
                     await this.plugin.saveSettings();
                 }));
 
+
+
         new Setting(containerEl)
-            .setName('Vocabulary File Path')
+            .setName('Vocabulary File')
             .setDesc('Path to the markdown file containing your vocabularies.')
-            .addText(text => text
-                .setPlaceholder('Enter file path')
-                .setValue(this.plugin.settings.vocabularyFilePath)
-                .onChange(async (value) => {
-                    this.plugin.settings.vocabularyFilePath = value;
-                    await this.plugin.saveSettings();
-                }));
+            .addSearch(search => {
+                search.setValue(this.plugin.settings.vocabularyFilePath)
+                    .setPlaceholder('Enter file path')
+                    .onChange(async (value) => {
+                        this.plugin.settings.vocabularyFilePath = value;
+                        await this.plugin.saveSettings();
+                    });
+                // Try to use FileSuggest if available, otherwise leave as plain search
+                try {
+                    // @ts-ignore
+                    if (typeof FileSuggest === 'function') {
+                        // @ts-ignore
+                        new FileSuggest(search.inputEl, this.app);
+                    }
+                } catch (e) {
+                    // fallback: do nothing, just use the text input
+                }
+            });
 
         new Setting(containerEl)
             .setName('Terms Per Line')
