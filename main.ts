@@ -1,3 +1,37 @@
+// FileSuggest using Obsidian's AbstractInputSuggest
+import { AbstractInputSuggest, TAbstractFile } from 'obsidian';
+
+class FileSuggest extends AbstractInputSuggest<TAbstractFile> {
+    app: App;
+    onSelectCallback?: (file: TAbstractFile) => void;
+    constructor(inputEl: HTMLInputElement, app: App, onSelectCallback?: (file: TAbstractFile) => void) {
+        super(app, inputEl);
+        this.app = app;
+        this.onSelectCallback = onSelectCallback;
+    }
+    getSuggestions(inputStr: string): TAbstractFile[] {
+        const abstractFiles = this.app.vault.getAllLoadedFiles();
+        return abstractFiles.filter(file =>
+            file.path.toLowerCase().includes(inputStr.toLowerCase())
+        );
+    }
+    renderSuggestion(file: TAbstractFile, el: HTMLElement) {
+        el.setText(file.path);
+    }
+    selectSuggestion(file: TAbstractFile) {
+        // inputEl is protected in AbstractInputSuggest, but accessible here
+        const input = (this as any)["inputEl"] as HTMLInputElement | undefined;
+        if (input) {
+            input.value = file.path;
+            // Trigger input event for Obsidian to pick up the change
+            input.dispatchEvent(new Event('input'));
+        }
+        if (this.onSelectCallback) {
+            this.onSelectCallback(file);
+        }
+        this.close();
+    }
+}
 // filepath: main.ts
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
 
@@ -30,11 +64,11 @@ async function loadVocabularies(filePath: string): Promise<Vocabulary> {
         const vocabularies: Vocabulary = {};
         //console.log(`Controlled Vocabs (content):`, content); // Log the content of the vocabulary file for debugging
 
-        content.split('\n').forEach(line => {
+        content.split('\n').forEach((line: string) => {
             if (line.trim() === '') return; // Skip empty lines
             const [key, value] = line.split(':');
             if (key && value) {
-                vocabularies[key.trim()] = value.split(',').map(term => term.trim());
+                vocabularies[key.trim()] = value.split(',').map((term: string) => term.trim());
             }
         });
         return vocabularies;
@@ -158,16 +192,15 @@ class SampleSettingTab extends PluginSettingTab {
                         this.plugin.settings.vocabularyFilePath = value;
                         await this.plugin.saveSettings();
                     });
-                // Try to use FileSuggest if available, otherwise leave as plain search
-                try {
-                    // @ts-ignore
-                    if (typeof FileSuggest === 'function') {
-                        // @ts-ignore
-                        new FileSuggest(search.inputEl, this.app);
+                new FileSuggest(search.inputEl, this.app, async (file) => {
+                    // When a file is selected from the dropdown, update and save the setting
+                    const value = file.path;
+                    if (this.plugin.settings.vocabularyFilePath !== value) {
+                        this.plugin.settings.vocabularyFilePath = value;
+                        search.setValue(value); // update UI field if needed
+                        await this.plugin.saveSettings();
                     }
-                } catch (e) {
-                    // fallback: do nothing, just use the text input
-                }
+                });
             });
 
         new Setting(containerEl)
