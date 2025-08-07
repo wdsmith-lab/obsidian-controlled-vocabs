@@ -40,11 +40,17 @@ AnotherVocab: alpha, beta, gamma, delta
 
 - Each line starts with the vocabulary name, followed by a colon (`:`), then a comma-separated list of terms.
 - Blank lines are ignored.
+- Spaces are allowed, colons (`:`) and commas (`,`) are reserved and can not be used in term names.
 - Example:
 
 ```
-Fruit: apple, banana, cherry, date
+Snippet Types: Article, Book, Quote, Website, Audio, Video
+Blog Topics: Tech-AI, Tech-Coding, Tech-General, Personal-General, Personal-Travel, Personal-Philosophical, Book Review
+Book Statuses: Read, Unread, Reading, Dropped, Wishlist, Reviewing
+Project Statuses: Brainstorming, Planning, Active, Reviewing, Paused, Cancelled, Completed
+Fruit: apple, banana, cherry, date, passion fruit
 Colors: red, green, blue, yellow
+Tags: #book, #hotkey, #todo
 ```
 
 ---
