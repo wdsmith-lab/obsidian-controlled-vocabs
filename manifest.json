@@ -4,9 +4,10 @@
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "Manage user defined controlled vocabularies in Obsidian.",
-	"author": "willds",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"author": "William D. Smith",
+	"authorUrl": "https://github.com/wdsmith-lab",
+	"fundingUrl": "https://buymeacoffee.com/willds",
+	"license": "MIT",
 	"main": "main.js",
 	"isDesktopOnly": false
 }
