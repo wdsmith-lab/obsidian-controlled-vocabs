@@ -79,7 +79,7 @@ async function loadVocabularies(filePath: string): Promise<Vocabulary> {
     }
 }
 
-export default class ControlledVocabsPlugin extends Plugin {
+class ControlledVocabsPlugin extends Plugin {
     settings: MyPluginSettings;
     vocabularies: Vocabulary = {};
 

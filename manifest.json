@@ -2,7 +2,7 @@
 	"id": "controlled-vocabs",
 	"name": "Controlled Vocabs",
 	"version": "1.0.0",
-	"minAppVersion": "0.15.0",
+	"minAppVersion": "1.0.0",
 	"description": "Manage user defined controlled vocabularies in Obsidian.",
 	"author": "William D. Smith",
 	"authorUrl": "https://github.com/wdsmith-lab",
