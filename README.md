@@ -19,6 +19,13 @@ Currently, all vocabularies are defined in a single markdown file. Future versio
 
 ---
 
+## Alternatives
+
+Not sure if this plugin is right for you?  You might be right!
+See [a comparison guide with other plugins](ControlledVocabs_Comparison_For_Users.md)
+
+---
+
 ## Settings
 
 Access the plugin settings via `Settings → Plugin Options → Controlled Vocabs`.
@@ -50,7 +57,7 @@ Book Statuses: Read, Unread, Reading, Dropped, Wishlist, Reviewing
 Project Statuses: Brainstorming, Planning, Active, Reviewing, Paused, Cancelled, Completed
 Fruit: apple, banana, cherry, date, passion fruit
 Colors: red, green, blue, yellow
-Tags: #book, #hotkey, #todo
+Tags: #book, #hotkey, #investigate, #todo
 ```
 
 ---
@@ -58,7 +65,7 @@ Tags: #book, #hotkey, #todo
 ## Usage Instructions
 
 1. **Configure the Plugin**
-   - Open the settings tab and set the path to your vocabulary file, output delimiter, and terms per line as desired.
+   - Open the settings tab and set the path to your vocabulary file, output delimiter, and terms per line in the modal display as desired.
 
 2. **Define Your Vocabularies**
    - Edit your vocabulary file in the specified format (see above).
