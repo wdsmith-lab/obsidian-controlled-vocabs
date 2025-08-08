@@ -88,16 +88,6 @@ Tags: #book, #hotkey, #investigate, #todo
 
 ---
 
-## Manually installing the plugin
-
-1. Go to the [releases page](https://github.com/wdsmith-lab/obsidian-controlled-vocabs/releases).
-2. Download the `main.js`, `manifest.json`, and `styles.css` files from the latest release.
-3. Create a new folder named `obsidian-controlled-vocabs` in your vault's `.obsidian/plugins` directory.
-4. Move the downloaded files into this new folder.
-5. Reload Obsidian and enable the "Controlled Vocabs" plugin in the settings.
-
----
-
 ## License
 
 See `LICENSE` for details.
