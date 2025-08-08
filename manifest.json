@@ -3,11 +3,9 @@
 	"name": "Controlled Vocabs",
 	"version": "1.0.0",
 	"minAppVersion": "1.0.0",
-	"description": "Manage user defined controlled vocabularies in Obsidian.",
+	"description": "Manage user defined controlled vocabularies.",
 	"author": "William D. Smith",
 	"authorUrl": "https://github.com/wdsmith-lab",
 	"fundingUrl": "https://buymeacoffee.com/willds",
-	"license": "MIT",
-	"main": "main.js",
 	"isDesktopOnly": false
 }
