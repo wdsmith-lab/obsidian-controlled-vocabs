@@ -35,8 +35,7 @@ class FileSuggest extends AbstractInputSuggest<TAbstractFile> {
 // filepath: main.ts
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
 
-interface MyPluginSettings {
-    mySetting: string;
+interface ControlledVocabsSettings {
     vocabularyFilePath: string;
     outputDelimiter: string;
     termsPerLine: number;  // Optional: Number of terms to display per line in the modal
@@ -46,8 +45,7 @@ interface Vocabulary {
     [key: string]: string[];
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
-    mySetting: 'default',
+const DEFAULT_SETTINGS: ControlledVocabsSettings = {
     vocabularyFilePath: 'vocabulary.md',
     outputDelimiter: ',',
     termsPerLine: 5  // Default to 5 terms per line
@@ -80,7 +78,7 @@ async function loadVocabularies(filePath: string): Promise<Vocabulary> {
 }
 
 class ControlledVocabsPlugin extends Plugin {
-    settings: MyPluginSettings;
+    settings: ControlledVocabsSettings;
     vocabularies: Vocabulary = {};
 
     async onload() {
@@ -131,7 +129,7 @@ class ControlledVocabsPlugin extends Plugin {
         });
 
         // This adds a settings tab so the user can configure various aspects of the plugin
-        this.addSettingTab(new SampleSettingTab(this.app, this));
+        this.addSettingTab(new ControlledVocabsSettingTab(this.app, this));
 
         // If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
         // Using this function will automatically remove the event listener when this plugin is disabled.
@@ -156,7 +154,7 @@ class ControlledVocabsPlugin extends Plugin {
     }
 }
 
-class SampleSettingTab extends PluginSettingTab {
+class ControlledVocabsSettingTab extends PluginSettingTab {
     plugin: ControlledVocabsPlugin;
 
     constructor(app: App, plugin: ControlledVocabsPlugin) {
