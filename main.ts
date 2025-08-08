@@ -353,3 +353,5 @@ class VocabModal extends Modal {
         }
     }
 }
+
+export default ControlledVocabsPlugin;

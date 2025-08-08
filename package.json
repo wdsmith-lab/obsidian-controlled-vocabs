@@ -1,11 +1,11 @@
 {
 	"name": "obsidian-controlled-vocabs",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "A plugin for Obsidian to manage controlled vocabularies.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
-		"build": "esbuild main.ts --outfile=main.js",
+		"build": "node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
 	"keywords": [],
