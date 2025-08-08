@@ -1,7 +1,7 @@
 {
 	"id": "controlled-vocabs",
 	"name": "Controlled Vocabs",
-	"version": "1.0.2",
+	"version": "1.0.1",
 	"minAppVersion": "1.0.0",
 	"description": "Manage user defined controlled vocabularies.",
 	"author": "William D. Smith",
