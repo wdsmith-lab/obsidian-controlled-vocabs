@@ -47,18 +47,30 @@ AnotherVocab: alpha, beta, gamma, delta
 
 - Each line starts with the vocabulary name, followed by a colon (`:`), then a comma-separated list of terms.
 - Blank lines are ignored.
-- Spaces are allowed, colons (`:`) and commas (`,`) are reserved and can not be used in term names.
+- Spaces are allowed.
+- **Special Characters**: To use a literal comma (`,`), colon (`:`), or backslash (`\`) in a vocabulary name or term, you must escape it with a preceding backslash.
+  - For a comma, use `\,`
+  - For a colon, use `\:`
+  - For a backslash, use `\\`
 - Example:
 
 ```
 Snippet Types: Article, Book, Quote, Website, Audio, Video
 Blog Topics: Tech-AI, Tech-Coding, Tech-General, Personal-General, Personal-Travel, Personal-Philosophical, Book Review
-Book Statuses: Read, Unread, Reading, Dropped, Wishlist, Reviewing
+Book Statuses: Read, Unread, Reading, Dropped, Wishlist, Reviewing, Reviewed
 Project Statuses: Brainstorming, Planning, Active, Reviewing, Paused, Cancelled, Completed
-Fruit: apple, banana, cherry, date, passion fruit
-Colors: red, green, blue, yellow
-Tags: #book, #hotkey, #investigate, #todo
+Advanced Usage: A Term\, with a comma, A Vocab Name\: with a colon, A term with a backslash \\
 ```
+
+
+> [!TIP] Tips & Tricks!
+> Tags: #book, #hotkey, #todo, #obsidian
+> Templatr Snippets: <% tp.file.title %>, <% tp.date.now("YYYY-MM-DD") %>, <% tp.file.include("[[My Note]]") %>
+> Core Placeholders: {{date}}, {{date:YYYY-MM-DD}}, {{time}}, {{time:HH:mm}}, {{title}}, {{author}}, {{year}}, {{citekey}}, {{pdf_link}}, {{zotero_link}} 
+> Emoji Panel: 😲,😎,✌️,📅,📊,✏️,📌,📍,✅
+> 
+> *Have others creative uses?*  [Share your own use case!](https://github.com/wdsmith-lab/obsidian-controlled-vocabs/discussions/categories/show-and-tell)
+
 
 ---
 
@@ -84,13 +96,12 @@ Tags: #book, #hotkey, #investigate, #todo
 ## Notes
 
 - If you remove a vocabulary from the file, its command may remain in the Command Palette until you reload the plugin or vault.
-- Future updates will add support for more advanced vocabulary management and file formats.
+- Future updates may add support for more advanced vocabulary management and file formats.
 
 ---
 
 ## Installing
-Unzip the latest (latest
-release)[https://github.com/wdsmith-lab/obsidian-controlled-vocabs/releases/latest] into your <vault>/.obsidian/plugins/ folder.
+Unzip the [latest release](https://github.com/wdsmith-lab/obsidian-controlled-vocabs/releases/latest) into your `<vault>/.obsidian/plugins/` folder.
 
 ## License
 

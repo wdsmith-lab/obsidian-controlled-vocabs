@@ -60,13 +60,21 @@ async function loadVocabularies(filePath: string): Promise<Vocabulary> {
         }
         const content = await this.app.vault.read(file);
         const vocabularies: Vocabulary = {};
-        //console.log(`Controlled Vocabs (content):`, content); // Log the content of the vocabulary file for debugging
 
         content.split('\n').forEach((line: string) => {
             if (line.trim() === '') return; // Skip empty lines
-            const [key, value] = line.split(':');
-            if (key && value) {
-                vocabularies[key.trim()] = value.split(',').map((term: string) => term.trim());
+
+            // Split by the first colon that is not preceded by a backslash
+            const match = line.match(/^(.*?)(?<!\\):(.*)$/);
+            if (match) {
+                const key = match[1].trim();
+                const value = match[2];
+
+                // Split terms by commas not preceded by a backslash, then unescape
+                const terms = value.split(/(?<!\\),/g).map(term => 
+                    term.trim().replace(/\\,/g, ",").replace(/\\:/g, ":").replace(/\\\\/g, "\\")
+                );
+                vocabularies[key] = terms;
             }
         });
         return vocabularies;
