@@ -65,13 +65,14 @@ Advanced Usage: A Term\, with a comma, A Vocab Name\: with a colon, A term with 
 ```
 
 
-> [!TIP] Tips & Tricks!
-> Tags: #book, #hotkey, #todo, #obsidian
-> Templatr Snippets: <% tp.file.title %>, <% tp.date.now("YYYY-MM-DD") %>, <% tp.file.include("[[My Note]]") %>
-> Core Placeholders: {{date}}, {{date:YYYY-MM-DD}}, {{time}}, {{time:HH:mm}}, {{title}}, {{author}}, {{year}}, {{citekey}}, {{pdf_link}}, {{zotero_link}} 
-> Emoji Panel: 😲,😎,✌️,📅,📊,✏️,📌,📍,✅
+> [!TIP]
+> ### Tips & Tricks!
+> - **Tags**: `#book`, `#hotkey`, `#todo`, `#obsidian`
+> - **Templater Snippets**: `<% tp.file.title %>`, `<% tp.date.now("YYYY-MM-DD") %>`, `<% tp.file.include("[[My Note]]") %>`
+> - **Core Placeholders**: `{{date}}`, `{{time}}`, `{{title}}`
+> - **Emoji Panel**: 😲,😎,✌️,📅,📊,✏️,📌,📍,✅
 > 
-> *Have others creative uses?*  [Share your own use case!](https://github.com/wdsmith-lab/obsidian-controlled-vocabs/discussions/categories/show-and-tell)
+> *Have other creative uses?*  [Share your own use case!](https://github.com/wdsmith-lab/obsidian-controlled-vocabs/discussions/categories/show-and-tell)
 
 
 ---
