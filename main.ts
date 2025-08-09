@@ -90,6 +90,33 @@ class ControlledVocabsPlugin extends Plugin {
     settings: ControlledVocabsSettings;
     vocabularies: Vocabulary = {};
 
+    async reloadVocabularies() {
+        const registerVocabCommands = () => {
+            for (const vocabName in this.vocabularies) {
+                console.log(`Controlled Vocabs: Registering command for vocabulary: ${vocabName}`);
+                this.addCommand({
+                    id: `add-from-${vocabName.toLowerCase().replace(/\s+/g, '-')}`,
+                    name: `Add from '${vocabName}'`,
+                    editorCallback: (editor: Editor, view: MarkdownView) => {
+                        new VocabModal(this.app, this, vocabName, this.vocabularies[vocabName], editor).open();
+                    }
+                });
+            }
+        };
+
+        const prevVocabNames = Object.keys(this.vocabularies);
+        this.vocabularies = await loadVocabularies.call(this, this.settings.vocabularyFilePath);
+        new Notice('Controlled Vocabs: Vocabularies reloaded.');
+        console.log("Controlled Vocabs: Vocabularies reloaded:", this.vocabularies);
+        registerVocabCommands();
+        // Warn if any vocabularies were removed (potential orphaned commands)
+        const currentVocabNames = Object.keys(this.vocabularies);
+        const removed = prevVocabNames.filter(name => !currentVocabNames.includes(name));
+        if (removed.length > 0) {
+            new Notice('Controlled Vocabs: Some commands for removed vocabularies may remain in the command palette until you disable/re-enable the plugin or reload the vault.');
+        }
+    }
+
     async onload() {
         console.log(`Controlled Vocabs: Loading Controlled Vocabs Plugin`);
         await this.loadSettings();
@@ -112,9 +139,7 @@ class ControlledVocabsPlugin extends Plugin {
 
         // Wait for layout to be ready before loading vocabularies and registering commands
         this.app.workspace.onLayoutReady(async () => {
-            this.vocabularies = await loadVocabularies.call(this, this.settings.vocabularyFilePath);
-            console.log("Controlled Vocabs: Vocabularies loaded:", this.vocabularies);
-            registerVocabCommands();
+            await this.reloadVocabularies();
         });
 
         // Add command to reload vocabularies
@@ -123,17 +148,7 @@ class ControlledVocabsPlugin extends Plugin {
             id: 'reload-vocabularies',
             name: 'Reload Vocabularies',
             callback: async () => {
-                const prevVocabNames = Object.keys(this.vocabularies);
-                this.vocabularies = await loadVocabularies.call(this, this.settings.vocabularyFilePath);
-                new Notice('Controlled Vocabs: Vocabularies reloaded.');
-                console.log("Controlled Vocabs: Vocabularies reloaded:", this.vocabularies);
-                registerVocabCommands();
-                // Warn if any vocabularies were removed (potential orphaned commands)
-                const currentVocabNames = Object.keys(this.vocabularies);
-                const removed = prevVocabNames.filter(name => !currentVocabNames.includes(name));
-                if (removed.length > 0) {
-                    new Notice('Controlled Vocabs: Some commands for removed vocabularies may remain in the command palette until you disable/re-enable the plugin or reload the vault.');
-                }
+                await this.reloadVocabularies();
             }
         });
 
@@ -175,6 +190,15 @@ class ControlledVocabsSettingTab extends PluginSettingTab {
         const {containerEl} = this;
 
         containerEl.empty();
+
+        new Setting(containerEl)
+            .setName('Reload Vocabulary File')
+            .setDesc('Click to reload the vocabulary file and update the commands.')
+            .addButton(button => button
+                .setButtonText("Reload")
+                .onClick(async () => {
+                    await this.plugin.reloadVocabularies();
+                }));
 
         new Setting(containerEl)
             .setName('Output Delimiter')
