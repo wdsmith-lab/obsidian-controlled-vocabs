@@ -88,6 +88,11 @@ Tags: #book, #hotkey, #investigate, #todo
 
 ---
 
+## Installing
+Unzip the latest (latest
+release)[https://github.com/wdsmith-lab/obsidian-controlled-vocabs/releases/latest] into your <vault>/.obsidian/plugins/ folder.
+
 ## License
 
 See `LICENSE` for details.
+
