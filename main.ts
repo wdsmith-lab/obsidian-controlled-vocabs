@@ -193,26 +193,14 @@ class ControlledVocabsSettingTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Reload Vocabulary File')
-            .setDesc('Click to reload the vocabulary file and update the commands.')
+            .setDesc('Click to reload the vocabulary file and update the commands.  This command also appears in the command palette.')
             .addButton(button => button
                 .setButtonText("Reload")
                 .onClick(async () => {
                     await this.plugin.reloadVocabularies();
                 }));
 
-        new Setting(containerEl)
-            .setName('Output Delimiter')
-            .setDesc("Delimiter used to separate output values.")
-            .addText(text => text
-                .setPlaceholder(', ')
-                .setValue(this.plugin.settings.outputDelimiter)
-                .onChange(async (value) => {
-                    this.plugin.settings.mySetting = value;
-                    await this.plugin.saveSettings();
-                }));
-
-
-
+        
         new Setting(containerEl)
             .setName('Vocabulary File')
             .setDesc('Path to the markdown file containing your vocabularies.')
@@ -232,7 +220,19 @@ class ControlledVocabsSettingTab extends PluginSettingTab {
                         await this.plugin.saveSettings();
                     }
                 });
-            });
+            });        
+
+        new Setting(containerEl)
+            .setName('Output Delimiter')
+            .setDesc("Delimiter used to separate output values.")
+            .addText(text => text
+                .setPlaceholder(', ')
+                .setValue(this.plugin.settings.outputDelimiter)
+                .onChange(async (value) => {
+                    this.plugin.settings.mySetting = value;
+                    await this.plugin.saveSettings();
+                }));
+
 
         new Setting(containerEl)
             .setName('Terms Per Line')
