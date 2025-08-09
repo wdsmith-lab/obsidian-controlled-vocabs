@@ -62,7 +62,8 @@ async function loadVocabularies(filePath: string): Promise<Vocabulary> {
         const vocabularies: Vocabulary = {};
 
         content.split('\n').forEach((line: string) => {
-            if (line.trim() === '') return; // Skip empty lines
+            const trimmedLine = line.trim();
+            if (trimmedLine === '' || trimmedLine.startsWith(';')) return; // Skip empty lines and comments
 
             // Split by the first colon that is not preceded by a backslash
             const match = line.match(/^(.*?)(?<!\\):(.*)$/);

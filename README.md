@@ -47,6 +47,7 @@ AnotherVocab: alpha, beta, gamma, delta
 
 - Each line starts with the vocabulary name, followed by a colon (`:`), then a comma-separated list of terms.
 - Blank lines are ignored.
+- **Comments**: Lines beginning with a semicolon (`;`) are treated as comments and will be ignored by the plugin.
 - Spaces are allowed.
 - **Special Characters**: To use a literal comma (`,`), colon (`:`), or backslash (`\`) in a vocabulary name or term, you must escape it with a preceding backslash.
   - For a comma, use `\,`
@@ -55,6 +56,7 @@ AnotherVocab: alpha, beta, gamma, delta
 - Example:
 
 ```
+; This is a comment, the line will be ignored by the plugin.
 Snippet Types: Article, Book, Quote, Website, Audio, Video
 Blog Topics: Tech-AI, Tech-Coding, Tech-General, Personal-General, Personal-Travel, Personal-Philosophical, Book Review
 Book Statuses: Read, Unread, Reading, Dropped, Wishlist, Reviewing, Reviewed
