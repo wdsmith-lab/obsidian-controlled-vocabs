@@ -1,7 +1,7 @@
 
 {
-    "id": "controlled-vocabs",
-    "name": "Controlled Vocabs",
+    "id": "lexicon",
+    "name": "Lexicon",
     "author": "William D. Smith",
     "description": "Manage user defined controlled vocabularies.",
     "repo": "wdsmith-lab/obsidian-controlled-vocabs"
