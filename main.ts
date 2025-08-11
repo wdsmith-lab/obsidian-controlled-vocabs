@@ -35,7 +35,7 @@ class FileSuggest extends AbstractInputSuggest<TAbstractFile> {
 // filepath: main.ts
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
 
-interface ControlledVocabsSettings {
+interface LexiconSettings {
     vocabularyFilePath: string;
     outputDelimiter: string;
     termsPerLine: number;  // Optional: Number of terms to display per line in the modal
@@ -45,7 +45,7 @@ interface Vocabulary {
     [key: string]: string[];
 }
 
-const DEFAULT_SETTINGS: ControlledVocabsSettings = {
+const DEFAULT_SETTINGS: LexiconSettings = {
     vocabularyFilePath: 'vocabulary.md',
     outputDelimiter: ',',
     termsPerLine: 5  // Default to 5 terms per line
@@ -80,23 +80,23 @@ async function loadVocabularies(filePath: string): Promise<Vocabulary> {
         });
         return vocabularies;
     } catch (e) {
-        new Notice(`Controlled Vocabs: Error loading vocabulary file "${filePath}": ${e}`);
-        console.log(`Controlled Vocabs: Error loading vocabulary file ` + filePath);
+        new Notice(`Lexicon: Error loading vocabulary file "${filePath}": ${e}`);
+        console.log(`Lexicon: Error loading vocabulary file ` + filePath);
         return {};
     }
 }
 
-class ControlledVocabsPlugin extends Plugin {
-    settings: ControlledVocabsSettings;
+class LexiconPlugin extends Plugin {
+    settings: LexiconSettings;
     vocabularies: Vocabulary = {};
 
     async reloadVocabularies() {
         const registerVocabCommands = () => {
             for (const vocabName in this.vocabularies) {
-                console.log(`Controlled Vocabs: Registering command for vocabulary: ${vocabName}`);
+                console.log(`Lexicon: Registering command for vocabulary: ${vocabName}`);
                 this.addCommand({
                     id: `add-from-${vocabName.toLowerCase().replace(/\s+/g, '-')}`,
-                    name: `Add from '${vocabName}'`,
+                    name: `Lexicon: Add from '${vocabName}'`,
                     editorCallback: (editor: Editor, view: MarkdownView) => {
                         new VocabModal(this.app, this, vocabName, this.vocabularies[vocabName], editor).open();
                     }
@@ -106,19 +106,19 @@ class ControlledVocabsPlugin extends Plugin {
 
         const prevVocabNames = Object.keys(this.vocabularies);
         this.vocabularies = await loadVocabularies.call(this, this.settings.vocabularyFilePath);
-        new Notice('Controlled Vocabs: Vocabularies reloaded.');
-        console.log("Controlled Vocabs: Vocabularies reloaded:", this.vocabularies);
+        new Notice('Lexicon: Vocabularies reloaded.');
+        console.log("Lexicon: Vocabularies reloaded:", this.vocabularies);
         registerVocabCommands();
         // Warn if any vocabularies were removed (potential orphaned commands)
         const currentVocabNames = Object.keys(this.vocabularies);
         const removed = prevVocabNames.filter(name => !currentVocabNames.includes(name));
         if (removed.length > 0) {
-            new Notice('Controlled Vocabs: Some commands for removed vocabularies may remain in the command palette until you disable/re-enable the plugin or reload the vault.');
+            new Notice('Lexicon: Some commands for removed vocabularies may remain in the command palette until you disable/re-enable the plugin or reload the vault.');
         }
     }
 
     async onload() {
-        console.log(`Controlled Vocabs: Loading Controlled Vocabs Plugin`);
+        console.log(`Lexicon: Loading Lexicon Plugin`);
         await this.loadSettings();
 
         // Helper to register all vocab commands
@@ -126,10 +126,10 @@ class ControlledVocabsPlugin extends Plugin {
             // Remove previous commands by reloading the plugin (Obsidian doesn't provide a direct way to remove commands)
             // So we just add new ones; duplicates are ignored by Obsidian.
             for (const vocabName in this.vocabularies) {
-                console.log(`Controlled Vocabs: Registering command for vocabulary: ${vocabName}`);
+                console.log(`Lexicon: Registering command for vocabulary: ${vocabName}`);
                 this.addCommand({
                     id: `add-from-${vocabName.toLowerCase().replace(/\s+/g, '-')}`,
-                    name: `Add from '${vocabName}'`,
+                    name: `Lexicon: Add from '${vocabName}'`,
                     editorCallback: (editor: Editor, view: MarkdownView) => {
                         new VocabModal(this.app, this, vocabName, this.vocabularies[vocabName], editor).open();
                     }
@@ -143,7 +143,7 @@ class ControlledVocabsPlugin extends Plugin {
         });
 
         // Add command to reload vocabularies
-        console.log("Controlled Vocabs: Adding reload command");
+        console.log("Lexicon: Adding reload command");
         this.addCommand({
             id: 'reload-vocabularies',
             name: 'Reload Vocabularies',
@@ -153,7 +153,7 @@ class ControlledVocabsPlugin extends Plugin {
         });
 
         // This adds a settings tab so the user can configure various aspects of the plugin
-        this.addSettingTab(new ControlledVocabsSettingTab(this.app, this));
+        this.addSettingTab(new LexiconSettingTab(this.app, this));
 
         // If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
         // Using this function will automatically remove the event listener when this plugin is disabled.
@@ -178,10 +178,10 @@ class ControlledVocabsPlugin extends Plugin {
     }
 }
 
-class ControlledVocabsSettingTab extends PluginSettingTab {
-    plugin: ControlledVocabsPlugin;
+class LexiconSettingTab extends PluginSettingTab {
+    plugin: LexiconPlugin;
 
-    constructor(app: App, plugin: ControlledVocabsPlugin) {
+    constructor(app: App, plugin: LexiconPlugin) {
         super(app, plugin);
         this.plugin = plugin;
     }
@@ -229,7 +229,7 @@ class ControlledVocabsSettingTab extends PluginSettingTab {
                 .setPlaceholder(', ')
                 .setValue(this.plugin.settings.outputDelimiter)
                 .onChange(async (value) => {
-                    this.plugin.settings.mySetting = value;
+                    this.plugin.settings.outputDelimiter = value;
                     await this.plugin.saveSettings();
                 }));
 
@@ -254,14 +254,14 @@ class ControlledVocabsSettingTab extends PluginSettingTab {
 }
 
 class VocabModal extends Modal {
-    plugin: ControlledVocabsPlugin;
+    plugin: LexiconPlugin;
     vocabName: string;
     terms: string[];
     editor: Editor;
     selectedTerms: Set<string>;
     previewEl: HTMLElement;
 
-    constructor(app: App, plugin: ControlledVocabsPlugin, vocabName: string, terms: string[], editor: Editor) {
+    constructor(app: App, plugin: LexiconPlugin, vocabName: string, terms: string[], editor: Editor) {
         super(app);
         this.plugin = plugin;
         this.vocabName = vocabName;
@@ -387,4 +387,4 @@ class VocabModal extends Modal {
     }
 }
 
-export default ControlledVocabsPlugin;
+export default LexiconPlugin;

@@ -1,8 +1,8 @@
-# Controlled Vocabs Obsidian Plugin
+# Lexicon Obsidian Plugin
 
 ## Purpose
 
-Controlled Vocabs is an Obsidian plugin that enables the creation and use of simple, user-defined vocabularies—similar to a lightweight taxonomy system. These vocabularies can be accessed anywhere in the Obsidian editor via the Command Palette, opening a modal to select and insert terms from your custom vocabularies. This helps standardize terminology, tags, or categories across your notes.
+Lexicon is an Obsidian plugin that enables the creation and use of simple, user-defined vocabularies—similar to a lightweight taxonomy system. These vocabularies can be accessed anywhere in the Obsidian editor via the Command Palette, opening a modal to select and insert terms from your custom vocabularies. This helps standardize terminology, tags, or categories across your notes.
 
 Currently, all vocabularies are defined in a single markdown file. Future versions will support more robust and flexible storage options.
 
@@ -22,7 +22,7 @@ Currently, all vocabularies are defined in a single markdown file. Future versio
 ## Alternatives
 
 Not sure if this plugin is right for you?  You might be right!
-See [a comparison guide with other plugins](ControlledVocabs_Comparison_For_Users.md)
+See [a comparison guide with other plugins](Lexicon_Comparison_For_Users.md)
 
 ---
 
@@ -72,7 +72,8 @@ Advanced Usage: A Term\, with a comma, A Vocab Name\: with a colon, A term with 
 > - **Core Placeholders**: `{{date}}`, `{{time}}`, `{{title}}`
 > - **Emoji Panel**: 😲,😎,✌️,📅,📊,✏️,📌,📍,✅
 > 
-> *Have other creative uses?*  [Share your own use case!](https://github.com/wdsmith-lab/obsidian-controlled-vocabs/discussions/categories/show-and-tell)
+> *Have other creative uses?*  [Share your own use
+> case!](https://github.com/wdsmith-lab/lexicon/discussions/categories/show-and-tell)
 
 
 ---
@@ -104,7 +105,7 @@ Advanced Usage: A Term\, with a comma, A Vocab Name\: with a colon, A term with 
 ---
 
 ## Installing
-Unzip the [latest release](https://github.com/wdsmith-lab/obsidian-controlled-vocabs/releases/latest) into your `<vault>/.obsidian/plugins/` folder.
+Unzip the [latest release](https://github.com/wdsmith-lab/obsidian-lexicon/releases/latest) into your `<vault>/.obsidian/plugins/` folder.
 
 ## License
 

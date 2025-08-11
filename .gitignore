@@ -27,3 +27,6 @@ data.json
 
 # Hot-reload/version-bump files
 versions.json
+
+# Local working directory (willds)
+_local/

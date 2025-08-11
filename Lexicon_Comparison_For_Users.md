@@ -1,14 +1,14 @@
-# Comparison with Other Plugins: Is Controlled Vocabs Right for You?
+# Comparison with Other Plugins: Is Lexicon Right for You?
 
-Obsidian has a rich plugin ecosystem, and if you're exploring **Controlled Vocabs**, you might be wondering how it differs from other tools for managing consistent terms, tags, or taxonomies.
+Obsidian has a rich plugin ecosystem, and if you're exploring **Lexicon**, you might be wondering how it differs from other tools for managing consistent terms, tags, or taxonomies.
 
-This guide compares Controlled Vocabs with related plugins to help you decide if it suits your workflow — or if another plugin may be a better fit.
+This guide compares Lexicon with related plugins to help you decide if it suits your workflow — or if another plugin may be a better fit.
 
 ---
 
-## What Controlled Vocabs Offers
+## What Lexicon Offers
 
-**Controlled Vocabs** is a plugin designed for **easy, flexible insertion of user-defined vocabulary terms** into your notes — anywhere in the editor.
+**Lexicon** is a plugin designed for **easy, flexible insertion of user-defined vocabulary terms** into your notes — anywhere in the editor.
 
 | Feature                        | Description |
 |-------------------------------|-------------|
@@ -27,7 +27,7 @@ If you want a lightweight, user-friendly way to insert standardized terms while 
 
 | Plugin                     | Term Source        | Where Terms Go         | Insert UI     | Metadata-Aware | Tag-Specific | Custom Vocab | External Source | Notes |
 |---------------------------|--------------------|-------------------------|---------------|----------------|--------------|---------------|------------------|-------|
-| **Controlled Vocabs**     | Markdown file       | Anywhere in note        | ✅ Modal       | ❌              | ✅ (if used)  | ✅             | ❌                | Flexible and editor-first |
+| **Lexicon**     | Markdown file       | Anywhere in note        | ✅ Modal       | ❌              | ✅ (if used)  | ✅             | ❌                | Flexible and editor-first |
 | Metadata Menu             | Plugin config       | YAML frontmatter        | ✅ Dropdown    | ✅              | ✅            | ✅             | ❌                | Metadata enforcement |
 | Tag Group Manager         | Manual group config | YAML / inline tags      | ✅ UI Panel    | ✅              | ✅            | ✅             | ❌                | Tag input assistant |
 | Tag Wrangler              | Existing tags       | Vault-wide cleanup      | ❌ (cleanup)   | ❌              | ✅            | ❌             | ❌                | For tag maintenance |
@@ -38,9 +38,9 @@ If you want a lightweight, user-friendly way to insert standardized terms while 
 
 ---
 
-## Who Should Use Controlled Vocabs?
+## Who Should Use Lexicon?
 
-Use **Controlled Vocabs** if you:
+Use **Lexicon** if you:
 - Want to define your own vocabularies and use them across your notes
 - Prefer a clean and focused UI for term insertion
 - Need something lightweight that doesn't require scripting
@@ -55,4 +55,4 @@ You might want **Virtual Linker** or **My Thesaurus** if you're:
 
 ---
 
-✅ **Bottom line**: *Controlled Vocabs is perfect if you want fast, user-defined term insertion from a simple source file — no scripting or setup overhead required.*
+✅ **Bottom line**: *Lexicon is perfect if you want fast, user-defined term insertion from a simple source file — no scripting or setup overhead required.*
