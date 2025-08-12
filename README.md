@@ -73,7 +73,7 @@ Advanced Usage: A Term\, with a comma, A Vocab Name\: with a colon, A term with 
 > - **Emoji Panel**: 😲,😎,✌️,📅,📊,✏️,📌,📍,✅
 > 
 > *Have other creative uses?*  [Share your own use
-> case!](https://github.com/wdsmith-lab/lexicon/discussions/categories/show-and-tell)
+> case!](https://github.com/wdsmith-lab/obsidian-lexicon/discussions/categories/show-and-tell)
 
 
 ---
