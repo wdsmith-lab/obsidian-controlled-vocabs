@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Lexicon is an Obsidian plugin that enables the creation and use of simple, user-defined vocabularies—similar to a lightweight taxonomy system. These vocabularies can be accessed anywhere in the Obsidian editor via the Command Palette, opening a modal to select and insert terms from your custom vocabularies. This helps standardize terminology, tags, or categories across your notes.
+Lexicon (formerly "Controlled Vocabs") is an Obsidian plugin that enables the creation and use of simple, user-defined vocabularies—similar to a lightweight taxonomy system. These vocabularies can be accessed anywhere in the Obsidian editor via the Command Palette, opening a modal to select and insert terms from your custom vocabularies. This helps standardize terminology, tags, or categories across your notes.
 
 Currently, all vocabularies are defined in a single markdown file. Future versions will support more robust and flexible storage options.
 
