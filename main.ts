@@ -96,7 +96,7 @@ class LexiconPlugin extends Plugin {
                 console.log(`Lexicon: Registering command for vocabulary: ${vocabName}`);
                 this.addCommand({
                     id: `add-from-${vocabName.toLowerCase().replace(/\s+/g, '-')}`,
-                    name: `Lexicon: Add from '${vocabName}'`,
+                    name: `Add from '${vocabName}'`,
                     editorCallback: (editor: Editor, view: MarkdownView) => {
                         new VocabModal(this.app, this, vocabName, this.vocabularies[vocabName], editor).open();
                     }
@@ -129,7 +129,7 @@ class LexiconPlugin extends Plugin {
                 console.log(`Lexicon: Registering command for vocabulary: ${vocabName}`);
                 this.addCommand({
                     id: `add-from-${vocabName.toLowerCase().replace(/\s+/g, '-')}`,
-                    name: `Lexicon: Add from '${vocabName}'`,
+                    name: `Add from '${vocabName}'`,
                     editorCallback: (editor: Editor, view: MarkdownView) => {
                         new VocabModal(this.app, this, vocabName, this.vocabularies[vocabName], editor).open();
                     }
