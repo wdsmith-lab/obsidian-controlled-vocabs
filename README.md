@@ -28,7 +28,7 @@ See [a comparison guide with other plugins](Lexicon_Comparison_For_Users.md)
 
 ## Settings
 
-Access the plugin settings via `Settings → Plugin Options → Controlled Vocabs`.
+Access the plugin settings via `Settings → Plugin Options → Lexicon`.
 
 - **Output Delimiter**: The string used to separate terms when inserting them (default: `,`).
 - **Vocabulary File**: Path to the markdown file containing your vocabularies. Use the file search to quickly select a file.
