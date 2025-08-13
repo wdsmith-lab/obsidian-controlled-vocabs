@@ -51,6 +51,30 @@ const DEFAULT_SETTINGS: LexiconSettings = {
     termsPerLine: 5  // Default to 5 terms per line
 }
 
+function splitByUnescapedComma(str: string): string[] {
+    const terms: string[] = [];
+    let currentTerm = '';
+    let escaped = false;
+
+    for (let i = 0; i < str.length; i++) {
+        const char = str[i];
+
+        if (escaped) {
+            currentTerm += char;
+            escaped = false;
+        } else if (char === '\\') {
+            escaped = true;
+        } else if (char === ',') {
+            terms.push(currentTerm);
+            currentTerm = '';
+        } else {
+            currentTerm += char;
+        }
+    }
+    terms.push(currentTerm); // Add the last term
+    return terms;
+}
+
 async function loadVocabularies(filePath: string): Promise<Vocabulary> {
     try {
         const file = this.app.vault.getAbstractFileByPath(filePath);
@@ -65,15 +89,21 @@ async function loadVocabularies(filePath: string): Promise<Vocabulary> {
             const trimmedLine = line.trim();
             if (trimmedLine === '' || trimmedLine.startsWith(';')) return; // Skip empty lines and comments
 
-            // Split by the first colon that is not preceded by a backslash
-            const match = line.match(/^(.*?)(?<!\\):(.*)$/);
-            if (match) {
-                const key = match[1].trim();
-                const value = match[2];
-
+            let key = '';
+            let value = '';
+            let foundColon = false;
+            for (let i = 0; i < line.length; i++) {
+                if (line[i] === ':' && (i === 0 || line[i - 1] !== '\\')) {
+                    key = line.substring(0, i).trim();
+                    value = line.substring(i + 1);
+                    foundColon = true;
+                    break;
+                }
+            }
+            if (foundColon) {
                 // Split terms by commas not preceded by a backslash, then unescape
-                const terms = value.split(/(?<!\\),/g).map(term => 
-                    term.trim().replace(/\\,/g, ",").replace(/\\:/g, ":").replace(/\\\\/g, "\\")
+                const terms = splitByUnescapedComma(value).map(term =>
+                    term.trim().replace(/\,/g, ",").replace(/\:/g, ":").replace(/\\/g, "")
                 );
                 vocabularies[key] = terms;
             }
